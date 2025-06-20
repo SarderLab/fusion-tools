@@ -1253,6 +1253,7 @@ class PropertyViewer(Tool):
         current_geojson = json.loads(get_pattern_matching_value(current_geojson))
         current_available_properties = json.loads(get_pattern_matching_value(available_properties))
 
+        print(f"update_property_viewer ctx.triggered_id: {ctx.triggered_id['type']}")
         if 'slide-map' in ctx.triggered_id['type']:
             # Only update the region info when this is checked
             if update_viewer:
@@ -1260,6 +1261,7 @@ class PropertyViewer(Tool):
 
         elif 'property-view-type' in ctx.triggered_id['type']:
             view_subtype_value = []
+            update_viewer = False
 
         current_property_data['update_view'] = update_viewer
         current_property_data['property'] = view_type_value
@@ -1463,7 +1465,9 @@ class PropertyViewer(Tool):
         for g_idx, g in enumerate(current_features):
             
             if current_property_data['update_view']:
+                int_time = time.time()
                 intersecting_shapes,intersecting_properties = find_intersecting(g,current_bounds_box)
+                print(f'Time to find intersecting structures: {g["properties"]["name"]}: {time.time() - int_time}')
                 current_property_data[g['properties']['_id']] = {
                     "geometry": intersecting_shapes,
                     "properties": intersecting_properties.to_dict('records')
